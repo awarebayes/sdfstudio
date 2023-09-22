@@ -43,7 +43,7 @@ class ProcessImages:
     """Path the data, either a video file or a directory of images."""
     output_dir: Path
     """Path to the output directory."""
-    camera_type: Literal["perspective", "fisheye"] = "perspective"
+    camera_type: Literal["perspective", "fisheye", "pinhole", "radial"] = "perspective"
     """Camera model to use."""
     matching_method: Literal["exhaustive", "sequential", "vocab_tree"] = "vocab_tree"
     """Feature matching method to use. Vocab tree is recommended for a balance of speed and
@@ -92,14 +92,14 @@ class ProcessImages:
         summary_log = []
 
         # Copy images to output directory
-        num_frames = process_data_utils.copy_images(self.data, image_dir=image_dir, verbose=self.verbose)
-        summary_log.append(f"Starting with {num_frames} images")
+        #num_frames = process_data_utils.copy_images(self.data, image_dir=image_dir, verbose=self.verbose)
+        #summary_log.append(f"Starting with {num_frames} images")
 
         # Downscale images
-        summary_log.append(process_data_utils.downscale_images(image_dir, self.num_downscales, verbose=self.verbose))
+        #summary_log.append(process_data_utils.downscale_images(image_dir, self.num_downscales, verbose=self.verbose))
 
         # Run COLMAP
-        colmap_dir = self.output_dir / "colmap"
+        colmap_dir = self.output_dir
         if not self.skip_colmap:
             colmap_dir.mkdir(parents=True, exist_ok=True)
 
@@ -132,16 +132,16 @@ class ProcessImages:
                 sys.exit(1)
 
         # Save transforms.json
-        if (colmap_dir / "sparse" / "0" / "cameras.bin").exists():
+        if (colmap_dir / "outputs" / "ref" / "cameras.bin").exists():
             with CONSOLE.status("[bold yellow]Saving results to transforms.json", spinner="balloon"):
                 num_matched_frames = colmap_utils.colmap_to_json(
-                    cameras_path=colmap_dir / "sparse" / "0" / "cameras.bin",
-                    images_path=colmap_dir / "sparse" / "0" / "images.bin",
+                    cameras_path=colmap_dir / "outputs" / "ref" / "cameras.bin",
+                    images_path=colmap_dir / "outputs" / "ref" / "images.bin",
                     output_dir=self.output_dir,
                     camera_model=CAMERA_MODELS[self.camera_type],
                 )
                 summary_log.append(f"Colmap matched {num_matched_frames} images")
-            summary_log.append(colmap_utils.get_matching_summary(num_frames, num_matched_frames))
+            # summary_log.append(colmap_utils.get_matching_summary(num_frames, num_matched_frames))
         else:
             CONSOLE.log("[bold yellow]Warning: could not find existing COLMAP results. Not generating transforms.json")
 

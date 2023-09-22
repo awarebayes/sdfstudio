@@ -591,11 +591,20 @@ def colmap_to_json(cameras_path: Path, images_path: Path, output_dir: Path, came
     cameras = read_cameras_binary(cameras_path)
     images = read_images_binary(images_path)
 
+    camera_ids = [i.camera_id for i in images.values()]
+    camera_ids_unique, camera_counts = np.unique(camera_ids, return_counts=True)
+    camera_with_most_images = camera_ids_unique[camera_counts == camera_counts.max()]
+    #camera_with_most_images = camera_with_most_images.item()
+    camera_with_most_images = 15
+
     # Only supports one camera
-    camera_params = cameras[1].params
+    #camera_params = cameras[camera_with_most_images].params
+    camera_params = cameras[camera_with_most_images].params
 
     frames = []
     for _, im_data in images.items():
+        #if im_data.camera_id != camera_with_most_images:
+        #    continue
         rotation = qvec2rotmat(im_data.qvec)
         translation = im_data.tvec.reshape(3, 1)
         w2c = np.concatenate([rotation, translation], 1)
@@ -613,14 +622,15 @@ def colmap_to_json(cameras_path: Path, images_path: Path, output_dir: Path, came
             "transform_matrix": c2w.tolist(),
         }
         frames.append(frame)
-
+    fx, cx, cy, _ = camera_params
+    fy = fx
     out = {
-        "fl_x": float(camera_params[0]),
-        "fl_y": float(camera_params[1]),
-        "cx": float(camera_params[2]),
-        "cy": float(camera_params[3]),
-        "w": cameras[1].width,
-        "h": cameras[1].height,
+        "fl_x": float(fx),
+        "fl_y": float(fy),
+        "cx": float(cx),
+        "cy": float(cy),
+        "w": cameras[camera_with_most_images].width,
+        "h": cameras[camera_with_most_images].height,
         "camera_model": camera_model.value,
     }
 

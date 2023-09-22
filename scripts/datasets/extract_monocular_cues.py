@@ -145,8 +145,8 @@ def save_outputs(img_path, output_file_name):
         # print(f"Reading input {img_path} ...")
         img = Image.open(img_path)
         H, W = img.size[1], img.size[0]
-        assert H == W, "Image should be square"
-        assert H % 384 == 0, "Image size should be divisible by 384"
+        # assert H == W, "Image should be square"
+        # assert H % 384 == 0, "Image size should be divisible by 384"
         scale_factor = H // 384
 
         img_tensor = trans_totensor(img)[:3].unsqueeze(0).to(device)

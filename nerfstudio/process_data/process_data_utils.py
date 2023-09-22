@@ -34,11 +34,15 @@ class CameraModel(Enum):
 
     OPENCV = "OPENCV"
     OPENCV_FISHEYE = "OPENCV_FISHEYE"
+    PINHOLE = "PINHOLE"
+    RADIAL = "RADIAL"
 
 
 CAMERA_MODELS = {
     "perspective": CameraModel.OPENCV,
     "fisheye": CameraModel.OPENCV_FISHEYE,
+    "pinhole": CameraModel.PINHOLE,
+    "radial": CameraModel.RADIAL,
 }
 
 
