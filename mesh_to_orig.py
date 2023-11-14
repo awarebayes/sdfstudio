@@ -63,8 +63,10 @@ xyz = []
 #    pose = np.array(frame['camtoworld'])
 #    t = pose[:3, 3]
 
-model.transform(transform)
 model.transform(worldtogt)
+model.transform(transform)
+
+o3d.io.write_triangle_mesh("./meshes/main_v2_orig.ply", model)
 
 o3d.visualization.draw_geometries([model, swapped_point_cloud, coordinate_frame, *camera_poses])
 #o3d.visualization.draw_geometries([model, *camera_poses])
