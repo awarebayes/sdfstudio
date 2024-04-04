@@ -128,7 +128,7 @@ def standardize_depth_map(img, mask_valid=None, trunc_value=0.1):
     if num_nan > 0:
         sorted_img = sorted_img[:-num_nan]
     # Remove outliers
-    trunc_img = sorted_img[int(trunc_value * len(sorted_img)):int((1 - trunc_value) * len(sorted_img))]
+    trunc_img = sorted_img[int(trunc_value * len(sorted_img)) : int((1 - trunc_value) * len(sorted_img))]
     trunc_mean = trunc_img.mean()
     trunc_var = trunc_img.var()
     eps = 1e-6

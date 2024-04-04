@@ -1,7 +1,6 @@
 import open3d as o3d
 import json
 import numpy as np
-import cv2
 import pycolmap
 import argparse
 
